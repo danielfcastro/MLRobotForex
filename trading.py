@@ -9,7 +9,9 @@ SMA = abstract.SMA
 SAR = abstract.SAR
 
 
-pd.set_option('display.max_columns', 30)
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 isBusinessDay = BDay().onOffset
 candle5MinOPEN = []
@@ -51,13 +53,13 @@ def cria_velas_5mins(df1minute):
     close = np.nan
     volume = np.nan
     for i in range(top):
-        tempo = df1.loc[i, 'hour']
+        tempo = df1.loc[i, 'date_hour']
         if i+4 < top:
             if tempo.minute % 5 == 0:
-                low = min(df1.loc[i:i+4, "low"].values)
-                high = max(df1.loc[i:i+4, "high"].values)
-                open = df1.loc[i, "open"]
-                close = df1.loc[i+4, "close"]
+                low = min(df1.loc[i:i+4, "LOW1M"].values)
+                high = max(df1.loc[i:i+4, "HIGH1M"].values)
+                open = df1.loc[i, "OPEN1M"]
+                close = df1.loc[i+4, "CLOSE1M"]
                 volume = sum(df1.loc[i:i+4, "volume"].values)
             candle5MinOPEN.append(open)
             candle5MinHIGH.append(high)
@@ -83,13 +85,13 @@ def cria_velas_15mins(df1minute):
     close = np.nan
     volume = np.nan
     for i in range(top):
-        tempo = df1.loc[i, 'hour']
+        tempo = df1.loc[i, 'date_hour']
         if i+14 < top:
             if tempo.minute % 15 == 0:
-                low = min(df1.loc[i:i+14, "low"].values)
-                high = max(df1.loc[i:i+14, "high"].values)
-                open = df1.loc[i, "open"]
-                close = df1.loc[i+14, "close"]
+                low = min(df1.loc[i:i+14, "LOW1M"].values)
+                high = max(df1.loc[i:i+14, "HIGH1M"].values)
+                open = df1.loc[i, "OPEN1M"]
+                close = df1.loc[i+14, "CLOSE1M"]
                 volume = sum(df1.loc[i:i+14, "volume"].values)
             candle15MinOPEN.append(open)
             candle15MinHIGH.append(high)
@@ -115,13 +117,13 @@ def cria_velas_30mins(df1minute):
     close = np.nan
     volume = np.nan
     for i in range(top):
-        tempo = df1.loc[i, 'hour']
+        tempo = df1.loc[i, 'date_hour']
         if i+29 < top:
             if tempo.minute % 30 == 0:
-                low = min(df1.loc[i:i+29, "low"].values)
-                high = max(df1.loc[i:i+29, "high"].values)
-                open = df1.loc[i, "open"]
-                close = df1.loc[i+29, "close"]
+                low = min(df1.loc[i:i+29, "LOW1M"].values)
+                high = max(df1.loc[i:i+29, "HIGH1M"].values)
+                open = df1.loc[i, "OPEN1M"]
+                close = df1.loc[i+29, "CLOSE1M"]
                 volume = sum(df1.loc[i:i+29, "volume"].values)
             candle30MinOPEN.append(open)
             candle30MinHIGH.append(high)
@@ -147,13 +149,13 @@ def cria_velas_60mins(df1minute):
     close = np.nan
     volume = np.nan
     for i in range(top):
-        tempo = df1.loc[i, 'hour']
+        tempo = df1.loc[i, 'date_hour']
         if i+59 < top:
             if tempo.minute % 60 == 0:
-                low = min(df1.loc[i:i+59, "low"].values)
-                high = max(df1.loc[i:i+59, "high"].values)
-                open = df1.loc[i, "open"]
-                close = df1.loc[i+59, "close"]
+                low = min(df1.loc[i:i+59, "LOW1M"].values)
+                high = max(df1.loc[i:i+59, "HIGH1M"].values)
+                open = df1.loc[i, "OPEN1M"]
+                close = df1.loc[i+59, "CLOSE1M"]
                 volume = sum(df1.loc[i:i+59, "volume"].values)
             candle60MinOPEN.append(open)
             candle60MinHIGH.append(high)
@@ -171,48 +173,44 @@ def cria_velas_60mins(df1minute):
 
 
 def le_csv_1min():
-    df1 = pd.read_csv('.\EURUSD\EURUSD1.csv', names=['date', 'hour', 'open', 'high', 'low', 'close', 'volume'])
-    """ df1.date_hour = pd.to_datetime(df1.date_hour, format='%d.%m.%Y %H:%M') """
-
+    dataFrameCSV = pd.read_csv('.\EURUSD\EURUSD1.csv', names=['date', 'hour', 'OPEN1M', 'HIGH1M', 'LOW1M', 'CLOSE1M', 'volume'],
+                      parse_dates=[['date', 'hour']])
+    dataFrameCSV.date_hour = pd.to_datetime(dataFrameCSV.date_hour, format='%d.%m.%Y %H:%M')
+    """
     df1.date = pd.to_datetime(df1.date, format='%Y.%m.%d', infer_datetime_format=True)
     df1.hour = pd.to_datetime(df1.hour, format='%H:%M')
+    
     start_date = '2019-09-10'
     end_date = '2019-10-11'
     df1 = df1[(df1['date'] >= start_date) & (df1['date'] <= end_date)]
     df1.set_index('date', 'hour')
     df1.date = pd.to_datetime(df1.date, format='%Y.%m.%d', infer_datetime_format=True)
     df1.hour = pd.to_datetime(df1.hour, format='%H:%M')
-    df1 = df1.dropna()
-    match_series = pd.to_datetime(df1['date']).map(isBusinessDay)
-    df1[match_series]
-    return df1
+    """
+    dataFrameCSV = dataFrameCSV.dropna()
+    match_series = pd.to_datetime(dataFrameCSV['date_hour']).map(isBusinessDay)
+    dataFrameCSV[match_series]
+    return dataFrameCSV
 
 
-def calcula_tp_sl_ordem():
+def calcula_tp_sl_ordem(df1):
     movimento = []
     tp = []
     sl = []
 
     columns = list(df1)
-    j = 0
     top = len(df1)
 
     try:
         for i in range(top):
-            j = i + 14
-            high = df1.loc[i:j, "high"].values
-            low = df1.loc[i:j, "low"].values
-            localmax = max(high)
-            localmin = min(low)
-
-            if df1.loc[j, "close"] > df1.loc[i, "close"]:
+            if df1.loc[i, "CLOSE60M"] > df1.loc[i, "CLOSE1M"]:
                 movimento.append(1)
-                tp.append(localmax)
-                sl.append(localmin)
-            elif df1.loc[j, "close"] < df1.loc[i, "close"]:
+                tp.append(df1.loc[i, "CLOSE60M"])
+                sl.append(df1.loc[i, "LOW60M"])
+            elif df1.loc[i, "CLOSE60M"] < df1.loc[i, "CLOSE1M"]:
                 movimento.append(-1)
-                tp.append(localmin)
-                sl.append(localmax)
+                sl.append(df1.loc[i, "CLOSE60M"])
+                tp.append(df1.loc[i, "LOW60M"])
             else:
                 movimento.append(0)
                 tp.append(0)
@@ -232,35 +230,52 @@ def calcula_tp_sl_ordem():
     df1.insert(len(df1.columns)-1, "SL", sl, True)
 
 
-df1 = le_csv_1min()
-cria_velas_para_tfs_superiores(df1)
-calcula_tp_sl_ordem(df1)
+def cria_media_movel(df1):
+    sma5_1m = SMA(df1, timeperiod=5, price='CLOSE1M')
+    sma15_1m = SMA(df1, timeperiod=15, price='CLOSE1M')
+    sma60_1m = SMA(df1, timeperiod=60, price='CLOSE1M')
+    sma89_1m = SMA(df1, timeperiod=89, price='CLOSE1M')
 
-"""
+    sma6_5m = SMA(df1, timeperiod=5, price='CLOSE5M')
+    sma12_5m = SMA(df1, timeperiod=12, price='CLOSE5M')
+    sma24_5m = SMA(df1, timeperiod=24, price='CLOSE5M')
+    sma48_5m = SMA(df1, timeperiod=48, price='CLOSE5M')
 
-sma5 = SMA(df1, timeperiod=5, price='close')
-sma15 = SMA(df1, timeperiod=15, price='close')
-sma60 = SMA(df1, timeperiod=60, price='close')
-sma89 = SMA(df1, timeperiod=89, price='close')
+    sma50_15m = SMA(df1, timeperiod=50, price='CLOSE15M')
+    sma100_15m = SMA(df1, timeperiod=100, price='CLOSE15M')
+    sma200_15m = SMA(df1, timeperiod=200, price='CLOSE15M')
 
-df1.insert(5, "SMA5", sma5, True)
-df1.insert(5, "SMA15", sma15, True)
-df1.insert(5, "SMA60", sma60, True)
-df1.insert(5, "SMA89", sma89, True)
-"""
+    sma50_1h = SMA(df1, timeperiod=50, price='CLOSE60M')
+    sma100_1h = SMA(df1, timeperiod=100, price='CLOSE60M')
+    sma200_1h = SMA(df1, timeperiod=200, price='CLOSE60M')
+
+    df1.insert(len(df1.columns)-1, "SMA5_1M", sma5_1m, True)
+    df1.insert(len(df1.columns)-1, "SMA15_1M", sma15_1m, True)
+    df1.insert(len(df1.columns)-1, "SMA60_1M", sma60_1m, True)
+    df1.insert(len(df1.columns)-1, "SMA89_1M", sma89_1m, True)
+    df1.insert(len(df1.columns)-1, "SMA6_5M", sma6_5m, True)
+    df1.insert(len(df1.columns)-1, "SMA12_5M", sma12_5m, True)
+    df1.insert(len(df1.columns)-1, "SMA24_5M", sma24_5m, True)
+    df1.insert(len(df1.columns)-1, "SMA48_5M", sma48_5m, True)
+    df1.insert(len(df1.columns)-1, "SMA50_15M", sma50_15m, True)
+    df1.insert(len(df1.columns)-1, "SMA100_15M", sma100_15m, True)
+    df1.insert(len(df1.columns)-1, "SMA200_15M", sma200_15m, True)
+    df1.insert(len(df1.columns)-1, "SMA50_1H", sma50_1h, True)
+    df1.insert(len(df1.columns)-1, "SMA100_1H", sma100_1h, True)
+    df1.insert(len(df1.columns)-1, "SMA200_1H", sma200_1h, True)
 
 
-
-graphic1MCandle = go.Candlestick(x=df1.index, open=df1['open'], high=df1['high'], low=df1['low'], close=df1['close'],
-                                 increasing_line_color='blue', decreasing_line_color='red')
-graphicTP = go.Scatter(x=df1.index, y=df1['TP'], name='TP', connectgaps=False, mode='markers')
-
-fig = tools.make_subplots(rows=2, cols=1, shared_yaxes=True, shared_xaxes=False)
-fig.add_trace(graphic1MCandle, 1, 1)
-fig.add_trace(graphicTP, 1, 1)
-fig.update_layout(title='EURUSD - M1 - TP @ 15M',
-                  xaxis_title='DATE AND TIME',
-                  yaxis_title='EURUSD')
+def cria_grafico(df1):
+    graphic_1m_candle = go.Candlestick(x=df1.index, open=df1['open'], high=df1['high'], low=df1['low'],
+                                       close=df1['close'], increasing_line_color='blue', decreasing_line_color='red')
+    graphic_tp = go.Scatter(x=df1.index, y=df1['TP'], name='TP', connectgaps=False, mode='markers')
+    fig = tools.make_subplots(rows=2, cols=1, shared_yaxes=True, shared_xaxes=False)
+    fig.add_trace(graphic_1m_candle, 1, 1)
+    fig.add_trace(graphic_tp, 1, 1)
+    fig.update_layout(title='EURUSD - M1 - TP @ 15M',
+                      xaxis_title='DATE AND TIME',
+                      yaxis_title='EURUSD')
+    py.offline.plot(fig, filename='tutorial.html')
 
 
 def update_figure(selected):
@@ -272,9 +287,14 @@ def update_figure(selected):
                                 xaxis={'rangeslider': {'visible': False}, 'autorange': "reversed", },
                                 yaxis={"title": f'Stock Price (USD)'}
                                 )}
+    fig.layout.on_change(update_figure, 'xaxis.range')
+    fig.update_layout(xaxis_rangeslider_visible=False)
 
 
-fig.layout.on_change(update_figure, 'xaxis.range')
-fig.update_layout(xaxis_rangeslider_visible=False)
-
-"""py.offline.plot(fig, filename='tutorial.html')"""
+df1 = le_csv_1min()
+df1.round(5)
+cria_velas_para_tfs_superiores(df1)
+df1 = df1.dropna()
+calcula_tp_sl_ordem(df1)
+cria_media_movel(df1)
+print(df1.tail(90))
