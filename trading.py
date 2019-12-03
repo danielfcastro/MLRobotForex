@@ -3,11 +3,10 @@ import pandas as pd
 from pandas.tseries.offsets import BDay
 from plotly import graph_objs as go
 from plotly import tools
+from talib import RSI
 from talib import abstract
 
 SMA = abstract.SMA
-SAR = abstract.SAR
-
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -38,13 +37,13 @@ candle5MinVOL = []
 
 
 def cria_velas_para_tfs_superiores(df1minute):
-    cria_velas_5mins(df1minute)
-    cria_velas_15mins(df1minute)
-    cria_velas_30mins(df1minute)
-    cria_velas_60mins(df1minute)
+    __cria_velas_5mins(df1minute)
+    __cria_velas_15mins(df1minute)
+    __cria_velas_30mins(df1minute)
+    __cria_velas_60mins(df1minute)
 
 
-def cria_velas_5mins(df1minute):
+def __cria_velas_5mins(df1minute):
     top = len(df1minute)
     tempo = 0
     low = np.nan
@@ -54,13 +53,13 @@ def cria_velas_5mins(df1minute):
     volume = np.nan
     for i in range(top):
         tempo = df1.loc[i, 'date_hour']
-        if i+4 < top:
+        if i + 4 < top:
             if tempo.minute % 5 == 0:
-                low = min(df1.loc[i:i+4, "LOW1M"].values)
-                high = max(df1.loc[i:i+4, "HIGH1M"].values)
+                low = min(df1.loc[i:i + 4, "LOW1M"].values)
+                high = max(df1.loc[i:i + 4, "HIGH1M"].values)
                 open = df1.loc[i, "OPEN1M"]
-                close = df1.loc[i+4, "CLOSE1M"]
-                volume = sum(df1.loc[i:i+4, "volume"].values)
+                close = df1.loc[i + 4, "CLOSE1M"]
+                volume = sum(df1.loc[i:i + 4, "volume"].values)
             candle5MinOPEN.append(open)
             candle5MinHIGH.append(high)
             candle5MinLOW.append(low)
@@ -70,13 +69,13 @@ def cria_velas_5mins(df1minute):
             candle5MinHIGH.append(np.nan)
             candle5MinLOW.append(np.nan)
             candle5MinCLOSE.append(np.nan)
-    df1minute.insert(len(df1.columns)-1, 'OPEN5M', candle5MinOPEN)
-    df1minute.insert(len(df1.columns)-1, 'HIGH5M', candle5MinHIGH)
-    df1minute.insert(len(df1.columns)-1, 'LOW5M', candle5MinLOW)
-    df1minute.insert(len(df1.columns)-1, 'CLOSE5M', candle5MinCLOSE)
+    df1minute.insert(len(df1.columns) - 1, 'OPEN5M', candle5MinOPEN)
+    df1minute.insert(len(df1.columns) - 1, 'HIGH5M', candle5MinHIGH)
+    df1minute.insert(len(df1.columns) - 1, 'LOW5M', candle5MinLOW)
+    df1minute.insert(len(df1.columns) - 1, 'CLOSE5M', candle5MinCLOSE)
 
 
-def cria_velas_15mins(df1minute):
+def __cria_velas_15mins(df1minute):
     top = len(df1minute)
     tempo = 0
     low = np.nan
@@ -86,13 +85,13 @@ def cria_velas_15mins(df1minute):
     volume = np.nan
     for i in range(top):
         tempo = df1.loc[i, 'date_hour']
-        if i+14 < top:
+        if i + 14 < top:
             if tempo.minute % 15 == 0:
-                low = min(df1.loc[i:i+14, "LOW1M"].values)
-                high = max(df1.loc[i:i+14, "HIGH1M"].values)
+                low = min(df1.loc[i:i + 14, "LOW1M"].values)
+                high = max(df1.loc[i:i + 14, "HIGH1M"].values)
                 open = df1.loc[i, "OPEN1M"]
-                close = df1.loc[i+14, "CLOSE1M"]
-                volume = sum(df1.loc[i:i+14, "volume"].values)
+                close = df1.loc[i + 14, "CLOSE1M"]
+                volume = sum(df1.loc[i:i + 14, "volume"].values)
             candle15MinOPEN.append(open)
             candle15MinHIGH.append(high)
             candle15MinLOW.append(low)
@@ -102,13 +101,13 @@ def cria_velas_15mins(df1minute):
             candle15MinHIGH.append(np.nan)
             candle15MinLOW.append(np.nan)
             candle15MinCLOSE.append(np.nan)
-    df1minute.insert(len(df1.columns)-1, 'OPEN15M', candle15MinOPEN)
-    df1minute.insert(len(df1.columns)-1, 'HIGH15M', candle15MinHIGH)
-    df1minute.insert(len(df1.columns)-1, 'LOW15M', candle15MinLOW)
-    df1minute.insert(len(df1.columns)-1, 'CLOSE15M', candle15MinCLOSE)
+    df1minute.insert(len(df1.columns) - 1, 'OPEN15M', candle15MinOPEN)
+    df1minute.insert(len(df1.columns) - 1, 'HIGH15M', candle15MinHIGH)
+    df1minute.insert(len(df1.columns) - 1, 'LOW15M', candle15MinLOW)
+    df1minute.insert(len(df1.columns) - 1, 'CLOSE15M', candle15MinCLOSE)
 
 
-def cria_velas_30mins(df1minute):
+def __cria_velas_30mins(df1minute):
     top = len(df1minute)
     tempo = 0
     low = np.nan
@@ -118,13 +117,13 @@ def cria_velas_30mins(df1minute):
     volume = np.nan
     for i in range(top):
         tempo = df1.loc[i, 'date_hour']
-        if i+29 < top:
+        if i + 29 < top:
             if tempo.minute % 30 == 0:
-                low = min(df1.loc[i:i+29, "LOW1M"].values)
-                high = max(df1.loc[i:i+29, "HIGH1M"].values)
+                low = min(df1.loc[i:i + 29, "LOW1M"].values)
+                high = max(df1.loc[i:i + 29, "HIGH1M"].values)
                 open = df1.loc[i, "OPEN1M"]
-                close = df1.loc[i+29, "CLOSE1M"]
-                volume = sum(df1.loc[i:i+29, "volume"].values)
+                close = df1.loc[i + 29, "CLOSE1M"]
+                volume = sum(df1.loc[i:i + 29, "volume"].values)
             candle30MinOPEN.append(open)
             candle30MinHIGH.append(high)
             candle30MinLOW.append(low)
@@ -134,13 +133,13 @@ def cria_velas_30mins(df1minute):
             candle30MinHIGH.append(np.nan)
             candle30MinLOW.append(np.nan)
             candle30MinCLOSE.append(np.nan)
-    df1minute.insert(len(df1.columns)-1, 'OPEN30M', candle30MinOPEN)
-    df1minute.insert(len(df1.columns)-1, 'HIGH30M', candle30MinHIGH)
-    df1minute.insert(len(df1.columns)-1, 'LOW30M', candle30MinLOW)
-    df1minute.insert(len(df1.columns)-1, 'CLOSE30M', candle30MinCLOSE)
+    df1minute.insert(len(df1.columns) - 1, 'OPEN30M', candle30MinOPEN)
+    df1minute.insert(len(df1.columns) - 1, 'HIGH30M', candle30MinHIGH)
+    df1minute.insert(len(df1.columns) - 1, 'LOW30M', candle30MinLOW)
+    df1minute.insert(len(df1.columns) - 1, 'CLOSE30M', candle30MinCLOSE)
 
 
-def cria_velas_60mins(df1minute):
+def __cria_velas_60mins(df1minute):
     top = len(df1minute)
     tempo = 0
     low = np.nan
@@ -150,13 +149,13 @@ def cria_velas_60mins(df1minute):
     volume = np.nan
     for i in range(top):
         tempo = df1.loc[i, 'date_hour']
-        if i+59 < top:
+        if i + 59 < top:
             if tempo.minute % 60 == 0:
-                low = min(df1.loc[i:i+59, "LOW1M"].values)
-                high = max(df1.loc[i:i+59, "HIGH1M"].values)
+                low = min(df1.loc[i:i + 59, "LOW1M"].values)
+                high = max(df1.loc[i:i + 59, "HIGH1M"].values)
                 open = df1.loc[i, "OPEN1M"]
-                close = df1.loc[i+59, "CLOSE1M"]
-                volume = sum(df1.loc[i:i+59, "volume"].values)
+                close = df1.loc[i + 59, "CLOSE1M"]
+                volume = sum(df1.loc[i:i + 59, "volume"].values)
             candle60MinOPEN.append(open)
             candle60MinHIGH.append(high)
             candle60MinLOW.append(low)
@@ -166,15 +165,16 @@ def cria_velas_60mins(df1minute):
             candle60MinHIGH.append(np.nan)
             candle60MinLOW.append(np.nan)
             candle60MinCLOSE.append(np.nan)
-    df1minute.insert(len(df1.columns)-1, 'OPEN60M', candle60MinOPEN)
-    df1minute.insert(len(df1.columns)-1, 'HIGH60M', candle60MinHIGH)
-    df1minute.insert(len(df1.columns)-1, 'LOW60M', candle60MinLOW)
-    df1minute.insert(len(df1.columns)-1, 'CLOSE60M', candle60MinCLOSE)
+    df1minute.insert(len(df1.columns) - 1, 'OPEN60M', candle60MinOPEN)
+    df1minute.insert(len(df1.columns) - 1, 'HIGH60M', candle60MinHIGH)
+    df1minute.insert(len(df1.columns) - 1, 'LOW60M', candle60MinLOW)
+    df1minute.insert(len(df1.columns) - 1, 'CLOSE60M', candle60MinCLOSE)
 
 
 def le_csv_1min():
-    dataFrameCSV = pd.read_csv('.\EURUSD\EURUSD1.csv', names=['date', 'hour', 'OPEN1M', 'HIGH1M', 'LOW1M', 'CLOSE1M', 'volume'],
-                      parse_dates=[['date', 'hour']])
+    dataFrameCSV = pd.read_csv('.\EURUSD\EURUSD1.csv',
+                               names=['date', 'hour', 'OPEN1M', 'HIGH1M', 'LOW1M', 'CLOSE1M', 'volume'],
+                               parse_dates=[['date', 'hour']])
     dataFrameCSV.date_hour = pd.to_datetime(dataFrameCSV.date_hour, format='%d.%m.%Y %H:%M')
     """
     df1.date = pd.to_datetime(df1.date, format='%Y.%m.%d', infer_datetime_format=True)
@@ -225,9 +225,9 @@ def calcula_tp_sl_ordem(df1):
         tp.insert(0, np.nan)
         sl.insert(0, np.nan)
 
-    df1.insert(len(df1.columns)-1, "ORDER", movimento, True)
-    df1.insert(len(df1.columns)-1, "TP", tp, True)
-    df1.insert(len(df1.columns)-1, "SL", sl, True)
+    df1.insert(len(df1.columns) - 1, "ORDER", movimento, True)
+    df1.insert(len(df1.columns) - 1, "TP", tp, True)
+    df1.insert(len(df1.columns) - 1, "SL", sl, True)
 
 
 def cria_media_movel(df1):
@@ -249,22 +249,42 @@ def cria_media_movel(df1):
     sma100_1h = SMA(df1, timeperiod=100, price='CLOSE60M')
     sma200_1h = SMA(df1, timeperiod=200, price='CLOSE60M')
 
-    df1.insert(len(df1.columns)-1, "SMA5_1M", sma5_1m, True)
-    df1.insert(len(df1.columns)-1, "SMA15_1M", sma15_1m, True)
-    df1.insert(len(df1.columns)-1, "SMA60_1M", sma60_1m, True)
-    df1.insert(len(df1.columns)-1, "SMA89_1M", sma89_1m, True)
-    df1.insert(len(df1.columns)-1, "SMA6_5M", sma6_5m, True)
-    df1.insert(len(df1.columns)-1, "SMA12_5M", sma12_5m, True)
-    df1.insert(len(df1.columns)-1, "SMA24_5M", sma24_5m, True)
-    df1.insert(len(df1.columns)-1, "SMA48_5M", sma48_5m, True)
-    df1.insert(len(df1.columns)-1, "SMA50_15M", sma50_15m, True)
-    df1.insert(len(df1.columns)-1, "SMA100_15M", sma100_15m, True)
-    df1.insert(len(df1.columns)-1, "SMA200_15M", sma200_15m, True)
-    df1.insert(len(df1.columns)-1, "SMA50_1H", sma50_1h, True)
-    df1.insert(len(df1.columns)-1, "SMA100_1H", sma100_1h, True)
-    df1.insert(len(df1.columns)-1, "SMA200_1H", sma200_1h, True)
+    df1.insert(len(df1.columns) - 1, "SMA5_1M", sma5_1m, True)
+    df1.insert(len(df1.columns) - 1, "SMA15_1M", sma15_1m, True)
+    df1.insert(len(df1.columns) - 1, "SMA60_1M", sma60_1m, True)
+    df1.insert(len(df1.columns) - 1, "SMA89_1M", sma89_1m, True)
+    df1.insert(len(df1.columns) - 1, "SMA6_5M", sma6_5m, True)
+    df1.insert(len(df1.columns) - 1, "SMA12_5M", sma12_5m, True)
+    df1.insert(len(df1.columns) - 1, "SMA24_5M", sma24_5m, True)
+    df1.insert(len(df1.columns) - 1, "SMA48_5M", sma48_5m, True)
+    df1.insert(len(df1.columns) - 1, "SMA50_15M", sma50_15m, True)
+    df1.insert(len(df1.columns) - 1, "SMA100_15M", sma100_15m, True)
+    df1.insert(len(df1.columns) - 1, "SMA200_15M", sma200_15m, True)
+    df1.insert(len(df1.columns) - 1, "SMA50_1H", sma50_1h, True)
+    df1.insert(len(df1.columns) - 1, "SMA100_1H", sma100_1h, True)
+    df1.insert(len(df1.columns) - 1, "SMA200_1H", sma200_1h, True)
 
+def cria_rsi(df1):
+    rsi_1m = RSI(df1['CLOSE1M'].values, timeperiod=14)
+    rsi_5m = RSI(df1['CLOSE5M'].values, timeperiod=14)
+    rsi_15m = RSI(df1['CLOSE15M'].values, timeperiod=14)
+    rsi_30m = RSI(df1['CLOSE30M'].values, timeperiod=14)
+    rsi_60m = RSI(df1['CLOSE60M'].values, timeperiod=14)
 
+    top = len(df1)
+    comp = len(rsi_1m)
+    for i in range(top - comp):
+        rsi_1m.insert(0, np.nan)
+        rsi_5m.insert(0, np.nan)
+        rsi_15m.insert(0, np.nan)
+        rsi_30m.insert(0, np.nan)
+        rsi_60m.insert(0, np.nan)
+
+    df1.insert(len(df1.columns) - 1, "RSI_1M", rsi_1m, True)
+    df1.insert(len(df1.columns) - 1, "RSI_5M", rsi_5m, True)
+    df1.insert(len(df1.columns) - 1, "RSI_15M", rsi_15m, True)
+    df1.insert(len(df1.columns) - 1, "RSI_30M", rsi_30m, True)
+    df1.insert(len(df1.columns) - 1, "RSI_60M", rsi_60m, True)
 def cria_grafico(df1):
     graphic_1m_candle = go.Candlestick(x=df1.index, open=df1['open'], high=df1['high'], low=df1['low'],
                                        close=df1['close'], increasing_line_color='blue', decreasing_line_color='red')
@@ -297,4 +317,12 @@ cria_velas_para_tfs_superiores(df1)
 df1 = df1.dropna()
 calcula_tp_sl_ordem(df1)
 cria_media_movel(df1)
-print(df1.tail(90))
+cria_rsi(df1)
+print(df1.loc[320:1420, :])
+
+"""
+- BUGS
+    - A colocação em um DAtaFrame de dados de vários TimeFrames distorce as médias e o RSI
+    é preciso separar em outros DataFrames 
+
+"""
